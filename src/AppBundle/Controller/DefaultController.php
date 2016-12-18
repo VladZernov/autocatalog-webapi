@@ -6,25 +6,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 class DefaultController extends Controller
 {
     /**
      * @Route("/showrooms", name="showrooms")
      * @Method({"GET"})
      */
-    public function getShowrooms()
+    public function getShowrooms(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         $showrooms = $em
             ->createQueryBuilder()
             ->select('s.id, s.title, s.address, s.phone')
-            ->from('AppBundle:Showroom','s','s.id')
+            ->from('AppBundle:Showroom','s')
             ->getQuery()
             ->getResult();
-
-        return $this->json($showrooms);
+        $callback = $request->get('callback');  
+        $response = new JsonResponse($showrooms, 200, array());
+        $response->setCallback($callback);
+        return $response;
     }
     /**
      * @Route("/showroom", name="showroom")
