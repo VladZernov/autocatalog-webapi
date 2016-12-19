@@ -48,7 +48,7 @@ class DefaultController extends Controller
             ->setParameter('x', $x)
             ->setParameter('y', $y)
             ->getQuery()
-            ->getSingleResult();
+            ->getResult();
 
         return $this->json($nearestShowroom);
     }
